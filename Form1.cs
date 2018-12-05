@@ -18,30 +18,45 @@ namespace GetHandle
     public partial class Form1 : Form
     {
         IntPtr procHandle;
-        string cmdArg0 = "\"C:\\Users\\quinn\\Desktop\\Forensic Tools\\Detection\\YARA\\yara64.exe\" "; //path to yara exe
-        string cmdArg1 = "\"C:\\Users\\quinn\\Desktop\\Forensic Tools\\Detection\\YARA\\Rules.txt\" "; //path to Rules
+        string path1;
+        string cmdPath;
+        // string cmdArg0 = "\"C:\\Users\\quinn\\Desktop\\Forensic Tools\\Detection\\YARA\\yara64.exe\" "; 
+        string cmdArg0;//path to yara exe
+        //string cmdArg1 = "\"C:\\Users\\quinn\\Desktop\\Forensic Tools\\Detection\\YARA\\Rules.txt\" ";
+        string cmdArg1; //path to Rules
         string cmdArg2 = "{%}procID{%}"; //%ProcId%
         string x;
         int cmdflag = 0;
         string output;
         int counter = 0;
         int flag = 0;
-
+        string outputFile;
+        string consoleFile;
+        string RuleResultfile;
+        string masterpath;
         List<int> PIDarray = new List<int>();
         int pidCounter = 0;
         public Form1()
         {
-            if (File.Exists(@"C:\Users\quinn\source\repos\GetHandle\GetHandle\bin\Debug\output.txt")) //Check If files exist and delete
+            Console.WriteLine("Please Input path to folder to save output, console, and ruleresult");
+            masterpath = Console.ReadLine();
+            outputFile = "\"" + masterpath + "\\"  + "output.txt" + "\"";
+            consoleFile = "\"" + masterpath + "\\" + "Console.txt" + "\"";
+            RuleResultfile =  masterpath + "\\" + "RuleResult.txt";
+
+
+
+            if (File.Exists(outputFile)) //Check If files exist and delete
             {
-                File.Delete(@"C:\Users\quinn\source\repos\GetHandle\GetHandle\bin\Debug\output.txt");
+                File.Delete(outputFile);
             }
-            if (File.Exists(@"C:\Users\quinn\source\repos\GetHandle\GetHandle\bin\Debug\Console.txt"))
+            if (File.Exists(consoleFile))
             {
-                File.Delete(@"C:\Users\quinn\source\repos\GetHandle\GetHandle\bin\Debug\Console.txt");
+                File.Delete(consoleFile);
             }
-            if (File.Exists(@"C:\Users\quinn\source\repos\GetHandle\GetHandle\bin\Debug\RuleResult.txt"))
+            if (File.Exists(RuleResultfile))
             {
-                File.Delete(@"C:\Users\quinn\source\repos\GetHandle\GetHandle\bin\Debug\RuleResult.txt");
+                File.Delete(RuleResultfile);
             }
 
             var PID = new List<int>();
@@ -49,6 +64,11 @@ namespace GetHandle
         
             Process[] procs = Process.GetProcesses(); //Returns an array of all open processes into procs
             IntPtr hWnd;
+            Console.WriteLine("Please Input Path to exe: -->");
+            cmdArg0 = "\"" + Console.ReadLine() + "\"" + " ";
+            Console.WriteLine("\nPlease input path to yara rules");
+            cmdArg1 = "\"" + Console.ReadLine() + "\"" + " ";
+            
             foreach (Process proc in procs)
             {
                 if ((hWnd = proc.MainWindowHandle) != IntPtr.Zero)
@@ -116,26 +136,31 @@ namespace GetHandle
                     PIDarray.Add(d);
                     Console.WriteLine("Process Name: {0} | PID: {1}", localbyId, d);
                     string fileout = String.Format("Process Name: {0} | PID: {1}", localbyId, d);
-                    File.AppendAllText(@"C:\Users\quinn\source\repos\GetHandle\GetHandle\bin\Debug\ProcLog.txt", fileout); //This is the loop to obtain a list of all processes.
+                    File.AppendAllText(masterpath + "\\" + "ProcLog.txt", fileout); //This is the loop to obtain a list of all processes.
 
                 }
                 catch (ArgumentException)
 
                 {
                     string console = "Process " + d + " does not exist\n";
+                    string Cf = masterpath + "\\" + "Console.txt";
                   //  Console.WriteLine("Process %d does not exist", d);
-                    File.AppendAllText(@"C:\Users\quinn\source\repos\GetHandle\GetHandle\bin\Debug\Console.txt", console); //This txt file contains a list of misc outputs.
+                    File.AppendAllText(Cf, console); //This txt file contains a list of misc outputs.
                 }
 
                 //   // Console.ReadLine();
-
+               
             }
+            extfunc.SetForegroundWindow(procHandle);
+            SendKeys.SendWait("SET outPath=" + RuleResultfile);
+            SendKeys.SendWait("{ENTER}");
             foreach (int item in PIDarray)
             {
                 var v1 = extfunc.SetForegroundWindow(procHandle);
                 SendKeys.SendWait("SET /A procID=" + item);
                 SendKeys.SendWait("{ENTER}");
-                SendKeys.SendWait(cmdArg0 + cmdArg1 + cmdArg2 + " >> RuleResult.txt"); //This file contains a list of all of our rule outputs.
+                
+                SendKeys.SendWait(cmdArg0 + cmdArg1 + cmdArg2 + " >> \"{%}outPath{%}\""); //This file contains a list of all of our rule outputs.
                 SendKeys.SendWait("{ENTER}");
                 
             }
@@ -144,11 +169,11 @@ namespace GetHandle
             InitializeComponent();
             System.Threading.Thread.Sleep(1000);
             List<string> RuleReturn = new List<string>();
-            string loadfile = @"C:\Users\quinn\source\repos\GetHandle\GetHandle\bin\Debug\RuleResult.txt";
-            richTextBox1.LoadFile(loadfile, RichTextBoxStreamType.PlainText);
+            string loadfile = "\"" + RuleResultfile + "\"";
+            richTextBox1.LoadFile(RuleResultfile, RichTextBoxStreamType.PlainText);
             ParseInputs inputParser = new ParseInputs();
-            inputParser.FormatRules(@"C:\Users\quinn\source\repos\GetHandle\GetHandle\bin\Debug\RuleResult.txt",out RuleReturn);
-            Console.ReadLine();
+            inputParser.FormatRules(RuleResultfile,out RuleReturn);
+           
 
 
         }
