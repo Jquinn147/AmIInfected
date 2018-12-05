@@ -84,7 +84,11 @@ namespace GetHandle
                     ProcList.Add(proc.ProcessName); //Save list of PID's into string list 
                     if (proc.ProcessName == "cmd")
                     {
-                        procHandle = hWnd; //Injection handle
+                        procHandle = hWnd;
+                        extfunc.SetForegroundWindow(procHandle);
+                        System.Threading.Thread.Sleep(100);
+                        SendKeys.SendWait("SET outPath=" + RuleResultfile);
+                        SendKeys.SendWait("{ENTER}");//Injection handle
                     }
                  
                 }
@@ -106,7 +110,11 @@ namespace GetHandle
                         ProcList.Add(proc.ProcessName); //Save list of PID's into string list 
                         if (proc.ProcessName == "cmd")
                         {
-                            procHandle = hWnd; //Injection handle
+                            procHandle = hWnd;
+                            extfunc.SetForegroundWindow(procHandle);
+                            System.Threading.Thread.Sleep(100);
+                            SendKeys.SendWait("SET outPath=" + RuleResultfile);
+                            SendKeys.SendWait("{ENTER}");//Injection handle
                         }
                         cmdflag = 0;
                     }
@@ -156,12 +164,11 @@ namespace GetHandle
                 //   // Console.ReadLine();
                
             }
-            extfunc.SetForegroundWindow(procHandle);
-            SendKeys.SendWait("SET outPath=" + RuleResultfile);
-            SendKeys.SendWait("{ENTER}");
+            
             foreach (int item in PIDarray)
             {
                 var v1 = extfunc.SetForegroundWindow(procHandle);
+      
                 SendKeys.SendWait("SET /A procID=" + item);
                 SendKeys.SendWait("{ENTER}");
                 
