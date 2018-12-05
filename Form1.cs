@@ -41,7 +41,7 @@ namespace GetHandle
             Console.WriteLine("Please Input path to folder to save output, console, and ruleresult");
             masterpath = Console.ReadLine();
             outputFile = "\"" + masterpath + "\\"  + "output.txt" + "\"";
-            consoleFile = "\"" + masterpath + "\\" + "Console.txt" + "\"";
+            consoleFile =masterpath + "\\" + "Console.txt" ;
             RuleResultfile =  masterpath + "\\" + "RuleResult.txt";
 
 
@@ -58,6 +58,10 @@ namespace GetHandle
             {
                 File.Delete(RuleResultfile);
             }
+            if (File.Exists(masterpath + "\\" + "ProcLog.txt"))
+            {
+                File.Delete(masterpath + "\\" + "ProcLog.txt");
+          }
 
             var PID = new List<int>();
             var ProcList = new List<string>();
@@ -134,8 +138,8 @@ namespace GetHandle
                     
                     Process localbyId = Process.GetProcessById(d);
                     PIDarray.Add(d);
-                    Console.WriteLine("Process Name: {0} | PID: {1}", localbyId, d);
-                    string fileout = String.Format("Process Name: {0} | PID: {1}", localbyId, d);
+                    Console.WriteLine("Process Name: {0} | PID: {1}\n", localbyId, d);
+                    string fileout = String.Format("Process Name: {0} | PID: {1}\n", localbyId, d);
                     File.AppendAllText(masterpath + "\\" + "ProcLog.txt", fileout); //This is the loop to obtain a list of all processes.
 
                 }
