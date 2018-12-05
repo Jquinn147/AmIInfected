@@ -1,0 +1,10 @@
+C:\Users\quinn\source\repos\GetHandle\GetHandle\bin\Debug\GetHandle.exe.config
+C:\Users\quinn\source\repos\GetHandle\GetHandle\bin\Debug\GetHandle.exe
+C:\Users\quinn\source\repos\GetHandle\GetHandle\bin\Debug\GetHandle.pdb
+C:\Users\quinn\source\repos\GetHandle\GetHandle\obj\Debug\GetHandle.csprojAssemblyReference.cache
+C:\Users\quinn\source\repos\GetHandle\GetHandle\obj\Debug\GetHandle.Form1.resources
+C:\Users\quinn\source\repos\GetHandle\GetHandle\obj\Debug\GetHandle.Properties.Resources.resources
+C:\Users\quinn\source\repos\GetHandle\GetHandle\obj\Debug\GetHandle.csproj.GenerateResource.cache
+C:\Users\quinn\source\repos\GetHandle\GetHandle\obj\Debug\GetHandle.csproj.CoreCompileInputs.cache
+C:\Users\quinn\source\repos\GetHandle\GetHandle\obj\Debug\GetHandle.exe
+C:\Users\quinn\source\repos\GetHandle\GetHandle\obj\Debug\GetHandle.pdb
