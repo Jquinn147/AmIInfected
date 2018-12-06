@@ -89,6 +89,10 @@ namespace GetHandle
                         System.Threading.Thread.Sleep(100);
                         SendKeys.SendWait("SET outPath=" + RuleResultfile);
                         SendKeys.SendWait("{ENTER}");//Injection handle
+                        SendKeys.SendWait("SET cmd0=" + cmdArg0);
+                        SendKeys.SendWait("{ENTER}");
+                        SendKeys.SendWait("SET cmd1=" + cmdArg1);
+                        SendKeys.SendWait("{ENTER}");
                     }
                  
                 }
@@ -115,6 +119,11 @@ namespace GetHandle
                             System.Threading.Thread.Sleep(100);
                             SendKeys.SendWait("SET outPath=" + RuleResultfile);
                             SendKeys.SendWait("{ENTER}");//Injection handle
+                            SendKeys.SendWait("SET cmd0=" + cmdArg0);
+                            SendKeys.SendWait("{ENTER}");
+                            SendKeys.SendWait("SET cmd1=" + cmdArg1);
+                            SendKeys.SendWait("{ENTER}");
+
                         }
                         cmdflag = 0;
                     }
@@ -172,7 +181,7 @@ namespace GetHandle
                 SendKeys.SendWait("SET /A procID=" + item);
                 SendKeys.SendWait("{ENTER}");
                 
-                SendKeys.SendWait(cmdArg0 + cmdArg1 + cmdArg2 + " >> \"{%}outPath{%}\""); //This file contains a list of all of our rule outputs.
+                SendKeys.SendWait("{%}cmd0{%}" + " " + "{%}cmd1{%}" +" " + "{%}procID{%}" + " >> \"{%}outPath{%}\""); //This file contains a list of all of our rule outputs.
                 SendKeys.SendWait("{ENTER}");
                 
             }
