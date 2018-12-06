@@ -100,36 +100,71 @@ namespace GetHandle
 
             Console.WriteLine("Process Handle2 = {0}", procHandle);
             if (ProcList.Contains("cmd") == false){
-
-                MyProc openProc = new MyProc();
-                openProc.OpenApplication("C:\\Windows\\System32\\cmd.exe");
-                cmdflag = 1;
-                System.Threading.Thread.Sleep(1000);
-                procs = Process.GetProcesses();
-                foreach (Process proc in procs)
+                int whilecount = 1;
+               
+                    MyProc openProc = new MyProc();
+                    openProc.OpenApplication("C:\\Windows\\System32\\cmd.exe");
+                    cmdflag = 1;
+                    System.Threading.Thread.Sleep(1000);
+                while (whilecount == 1)
                 {
-                    if ((hWnd = proc.MainWindowHandle) != IntPtr.Zero || cmdflag == 1)
+                   Process[] procs1 = Process.GetProcesses();
+                    foreach (Process proc in procs1)
                     {
-                        Console.WriteLine("{0} : {1}", proc.ProcessName, hWnd);
-                        Console.WriteLine("PID of {0} : {1}", proc.ProcessName, proc.Id);
-                        PID.Add(proc.Id); //Save list of PID's into a int list named PID
-                        ProcList.Add(proc.ProcessName); //Save list of PID's into string list 
-                        if (proc.MainWindowTitle == "C:\\Windows\\System32\\cmd.exe")
+                        if ((hWnd = proc.MainWindowHandle) != IntPtr.Zero || cmdflag == 1)
                         {
-                            procHandle = hWnd;
-                            extfunc.SetForegroundWindow(procHandle);
-                            System.Threading.Thread.Sleep(100);
-                            SendKeys.SendWait("SET outPath=" + RuleResultfile);
-                            SendKeys.SendWait("{ENTER}");//Injection handle
-                            SendKeys.SendWait("SET cmd0=" + cmdArg0);
-                            SendKeys.SendWait("{ENTER}");
-                            SendKeys.SendWait("SET cmd1=" + cmdArg1);
-                            SendKeys.SendWait("{ENTER}");
+                            Console.WriteLine("{0} : {1}", proc.ProcessName, hWnd);
+                            Console.WriteLine("PID of {0} : {1}", proc.ProcessName, proc.Id);
+                            PID.Add(proc.Id); //Save list of PID's into a int list named PID
+                            ProcList.Add(proc.ProcessName); //Save list of PID's into string list 
+                            if (proc.MainWindowTitle == "C:\\Windows\\System32\\cmd.exe" || proc.MainWindowTitle == "Administrator: C:\\Windows\\System32\\cmd.exe")
+                            {
+                                procHandle = hWnd;
+                                extfunc.SetForegroundWindow(procHandle);
+                                System.Threading.Thread.Sleep(100);
+                                SendKeys.SendWait("SET outPath=" + RuleResultfile);
+                                SendKeys.SendWait("{ENTER}");//Injection handle
+                                SendKeys.SendWait("SET cmd0=" + cmdArg0);
+                                SendKeys.SendWait("{ENTER}");
+                                SendKeys.SendWait("SET cmd1=" + cmdArg1);
+                                SendKeys.SendWait("{ENTER}");
+                                whilecount = 0;
 
+                            }
+                            cmdflag = 0;
                         }
-                        cmdflag = 0;
                     }
+
                 }
+                //MyProc openProc = new MyProc();
+                //openProc.OpenApplication("C:\\Windows\\System32\\cmd.exe");
+                //cmdflag = 1;
+                //System.Threading.Thread.Sleep(1000);
+                //procs = Process.GetProcesses();
+                //foreach (Process proc in procs)
+                //{
+                //    if ((hWnd = proc.MainWindowHandle) != IntPtr.Zero || cmdflag == 1)
+                //    {
+                //        Console.WriteLine("{0} : {1}", proc.ProcessName, hWnd);
+                //        Console.WriteLine("PID of {0} : {1}", proc.ProcessName, proc.Id);
+                //        PID.Add(proc.Id); //Save list of PID's into a int list named PID
+                //        ProcList.Add(proc.ProcessName); //Save list of PID's into string list 
+                //        if (proc.MainWindowTitle == "C:\\Windows\\System32\\cmd.exe")
+                //        {
+                //            procHandle = hWnd;
+                //            extfunc.SetForegroundWindow(procHandle);
+                //            System.Threading.Thread.Sleep(100);
+                //            SendKeys.SendWait("SET outPath=" + RuleResultfile);
+                //            SendKeys.SendWait("{ENTER}");//Injection handle
+                //            SendKeys.SendWait("SET cmd0=" + cmdArg0);
+                //            SendKeys.SendWait("{ENTER}");
+                //            SendKeys.SendWait("SET cmd1=" + cmdArg1);
+                //            SendKeys.SendWait("{ENTER}");
+
+                //        }
+                //        cmdflag = 0;
+                //    }
+                //}
 
                 //Console.WriteLine("{0} : {1}", Process.ProcessName, procHandle);
 
