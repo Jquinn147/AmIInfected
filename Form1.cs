@@ -104,6 +104,8 @@ namespace GetHandle
                 MyProc openProc = new MyProc();
                 openProc.OpenApplication("C:\\Windows\\System32\\cmd.exe");
                 cmdflag = 1;
+                System.Threading.Thread.Sleep(1000);
+                procs = Process.GetProcesses();
                 foreach (Process proc in procs)
                 {
                     if ((hWnd = proc.MainWindowHandle) != IntPtr.Zero || cmdflag == 1)
@@ -112,7 +114,7 @@ namespace GetHandle
                         Console.WriteLine("PID of {0} : {1}", proc.ProcessName, proc.Id);
                         PID.Add(proc.Id); //Save list of PID's into a int list named PID
                         ProcList.Add(proc.ProcessName); //Save list of PID's into string list 
-                        if (proc.ProcessName == "cmd")
+                        if (proc.MainWindowTitle == "C:\\Windows\\System32\\cmd.exe")
                         {
                             procHandle = hWnd;
                             extfunc.SetForegroundWindow(procHandle);
