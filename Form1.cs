@@ -20,9 +20,7 @@ namespace GetHandle
         IntPtr procHandle;
         string path1;
         string cmdPath;
-        // string cmdArg0 = "\"C:\\Users\\quinn\\Desktop\\Forensic Tools\\Detection\\YARA\\yara64.exe\" "; 
         string cmdArg0;//path to yara exe
-        //string cmdArg1 = "\"C:\\Users\\quinn\\Desktop\\Forensic Tools\\Detection\\YARA\\Rules.txt\" ";
         string cmdArg1; //path to Rules
         string cmdArg2 = "{%}procID{%}"; //%ProcId%
         string x;
@@ -69,9 +67,9 @@ namespace GetHandle
         
             Process[] procs = Process.GetProcesses(); //Returns an array of all open processes into procs
             IntPtr hWnd;
-            Console.WriteLine("Please Input Path to exe: -->");
+            Console.WriteLine("Please Input Path to YARA exe: -->");
             cmdArg0 = "\"" + Console.ReadLine() + "\"" + " ";
-            Console.WriteLine("\nPlease input path to yara rules");
+            Console.WriteLine("\nPlease input path to yara rules: -->");
             cmdArg1 = "\"" + Console.ReadLine() + "\"" + " ";
             
             foreach (Process proc in procs)
