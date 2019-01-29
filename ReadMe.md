@@ -7,7 +7,7 @@ From the cmd window can lead to things getting...unpredictable.
 So just don't do it.
 
 
-# Requirements #:
+# Requirements # 
   + Yara exe
   + Yara Rule List
   + Output folder
