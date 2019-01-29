@@ -75,12 +75,14 @@ namespace GetHandle
             foreach (Process proc in procs)
             {
                 if ((hWnd = proc.MainWindowHandle) != IntPtr.Zero)
+                //set Window Handle variable (hWnd) = proc.MainWindowHandle and then if not zero, continue.
                 {
-                    Console.WriteLine("{0} : {1}", proc.ProcessName, hWnd);
-                    Console.WriteLine("PID of {0} : {1}", proc.ProcessName, proc.Id);
-                    PID.Add(proc.Id); //Save list of PID's into a int list named PID
+                    Console.WriteLine("{0} : {1}", proc.ProcessName, hWnd); //Process Name, Handle
+                    Console.WriteLine("PID of {0} : {1}", proc.ProcessName, proc.Id); //Process Name, PID
+                    PID.Add(proc.Id); //Save list of PID's into a int list named PID for each PID found
                     ProcList.Add(proc.ProcessName); //Save list of PID's into string list 
-                    if (proc.ProcessName == "cmd")
+                    if (proc.ProcessName == "cmd") //If you already have CMD open, GREAT! it locates it and injects the necessary commands.
+                    //FOR THE LOVE OF ALL THAT IS HOLY AND SACRED, DO NOT CLOSE WHICHEVER CMD WINDOW IT OPENS TO END IT. Closing the program itself will end it just fine
                     {
                         procHandle = hWnd;
                         extfunc.SetForegroundWindow(procHandle);
@@ -96,13 +98,13 @@ namespace GetHandle
                 }
             }
 
-            Console.WriteLine("Process Handle2 = {0}", procHandle);
-            if (ProcList.Contains("cmd") == false){
+            //Console.WriteLine("Process Handle2 = {0}", procHandle);
+            if (ProcList.Contains("cmd") == false){ //CMD creation and injection
                 int whilecount = 1;
                
                     MyProc openProc = new MyProc();
-                    openProc.OpenApplication("C:\\Windows\\System32\\cmd.exe");
-                    cmdflag = 1;
+                    openProc.OpenApplication("C:\\Windows\\System32\\cmd.exe"); //path to CMD. Change if that's not yours.
+                    cmdflag = 1; //Flag used 
                     System.Threading.Thread.Sleep(1000);
                 while (whilecount == 1)
                 {
@@ -134,71 +136,39 @@ namespace GetHandle
                     }
 
                 }
-                //MyProc openProc = new MyProc();
-                //openProc.OpenApplication("C:\\Windows\\System32\\cmd.exe");
-                //cmdflag = 1;
-                //System.Threading.Thread.Sleep(1000);
-                //procs = Process.GetProcesses();
-                //foreach (Process proc in procs)
-                //{
-                //    if ((hWnd = proc.MainWindowHandle) != IntPtr.Zero || cmdflag == 1)
-                //    {
-                //        Console.WriteLine("{0} : {1}", proc.ProcessName, hWnd);
-                //        Console.WriteLine("PID of {0} : {1}", proc.ProcessName, proc.Id);
-                //        PID.Add(proc.Id); //Save list of PID's into a int list named PID
-                //        ProcList.Add(proc.ProcessName); //Save list of PID's into string list 
-                //        if (proc.MainWindowTitle == "C:\\Windows\\System32\\cmd.exe")
-                //        {
-                //            procHandle = hWnd;
-                //            extfunc.SetForegroundWindow(procHandle);
-                //            System.Threading.Thread.Sleep(100);
-                //            SendKeys.SendWait("SET outPath=" + RuleResultfile);
-                //            SendKeys.SendWait("{ENTER}");//Injection handle
-                //            SendKeys.SendWait("SET cmd0=" + cmdArg0);
-                //            SendKeys.SendWait("{ENTER}");
-                //            SendKeys.SendWait("SET cmd1=" + cmdArg1);
-                //            SendKeys.SendWait("{ENTER}");
-
-                //        }
-                //        cmdflag = 0;
-                //    }
-                //}
-
-                //Console.WriteLine("{0} : {1}", Process.ProcessName, procHandle);
-
 
             }
 
-            int Fuzznumber = 0; //This function asks is directly after the program lists all open windows, to give you an idea of how high you need to go.
-            Console.WriteLine("Max processes to be Fuzzed? -->");//At which point, it attempts to guess the PID's by simply using a loop with exception handlers for Process.GetProcessById(d);
+            int Fuzznumber = 0; //While GetProcess gets most of the processes, it doesn't get ALL of them. However, its still useful to see how high you need to fuzz. I shoot for 10k over the highest process revealed by GetProcess.
+            Console.WriteLine("Max processes to be Fuzzed? -->");//Using output from GetProcess, Enter in Highest PID to fuzz
             try
             {
-                Fuzznumber = Convert.ToInt32(Console.ReadLine());
+                Fuzznumber = Convert.ToInt32(Console.ReadLine()); //Basic error checking loop
             }
             catch
             {
                 Console.WriteLine("Error: That's not a number"); //exception handler in case you don't enter a number.
                 System.Environment.Exit(0); //I hate exceptions as a malware analyst, but boy are they useful.
             }
-            for (int d = 0; d < Fuzznumber; d++) //Here's the start of the loop that tries to guess the PID
+            for (int d = 0; d <= Fuzznumber; d++) //Here's the start of the loop that tries to guess the PID
             {
-              //  var v1 = extfunc.SetForegroundWindow(procHandle);
+              
                 var v2 = extfunc.GetLastError(); //I'll probably need this eventually. 
-               // Console.WriteLine("SetForeGroundWindow: {0}", v1);
-                //Console.WriteLine("Last error code: {0}", v2);
-                try
+               
+                try //Exception Handler for if GetProcessByID fails
                 {
-                    
-                    Process localbyId = Process.GetProcessById(d);
-                    PIDarray.Add(d);
+                    //If Successful
+                    Process localbyId = Process.GetProcessById(d); 
+                    PIDarray.Add(d); //Add PID to list of PID's
                     Console.WriteLine("Process Name: {0} | PID: {1}\n", localbyId, d);
-                    string fileout = String.Format("Process Name: {0} | PID: {1}\n", localbyId, d);
+                    string fileout = String.Format("Process Name: {0} | PID: {1}\n", localbyId, d); //Write to console and File successful PID
                     File.AppendAllText(masterpath + "\\" + "ProcLog.txt", fileout); //This is the loop to obtain a list of all processes.
 
                 }
                 catch (ArgumentException)
 
                 {
+                //If Fail
                     string console = "Process " + d + " does not exist\n";
                     string Cf = masterpath + "\\" + "Console.txt";
                   //  Console.WriteLine("Process %d does not exist", d);
@@ -209,14 +179,15 @@ namespace GetHandle
                
             }
             
-            foreach (int item in PIDarray)
+            foreach (int item in PIDarray) //FOR each PID in PIDarray
             {
-                var v1 = extfunc.SetForegroundWindow(procHandle);
-      
+                var v1 = extfunc.SetForegroundWindow(procHandle); //Set CMD as active window
+                //Use sendkeys to send commands to CMD.
                 SendKeys.SendWait("SET /A procID=" + item);
                 SendKeys.SendWait("{ENTER}");
-                
-                SendKeys.SendWait("{%}cmd0{%}" + " " + "{%}cmd1{%}" +" " + "{%}procID{%}" + " >> \"{%}outPath{%}\""); //This file contains a list of all of our rule outputs.
+                //In the above, %procID% = PID in list
+                //In the below, cmd0 = [Path to Yara exe] , cmd1 = [Yara Rule List] , procId, [Output Directory]/RuleResult.txt
+                SendKeys.SendWait("{%}cmd0{%}" + " " + "{%}cmd1{%}" +" " + "{%}procID{%}" + " >> \"{%}outPath{%}\""); //RuleResult.txt in your Output directory contains a list of all of our rule outputs.
                 SendKeys.SendWait("{ENTER}");
                 
             }
@@ -224,6 +195,8 @@ namespace GetHandle
 
             InitializeComponent();
             System.Threading.Thread.Sleep(1000);
+            
+            //Early version of visual output
             List<string> RuleReturn = new List<string>();
             string loadfile = "\"" + RuleResultfile + "\"";
             richTextBox1.LoadFile(RuleResultfile, RichTextBoxStreamType.PlainText);
@@ -238,7 +211,7 @@ namespace GetHandle
     }
 }
 
-public class extfunc
+public class extfunc //Imports from various Windows Libraries
 {
     public delegate bool EnumDelegate(IntPtr hwnd, int lParam); //Filter
 
@@ -308,8 +281,8 @@ class ParseInputs
                 
             switch (c)
             {
-                case 10:
-                    zx[counter1] = 32;
+                case 10: //0x0A or "carriage-return". end of line = end of file output.
+                    zx[counter1] = 32; //Set = to 0x20, which is much easier to work with
                     
                     
                     break;
@@ -338,7 +311,11 @@ class ParseInputs
           
             { 
 
-            case 32:
+            case 32: //I really don't want to explain this. but essentially uses 0x20 as a delimiter.
+                    //As there are now 2 0x20's here (1 before the ResultValue portion and 1 at end of Result)
+                    //We need the second one. this is where int flag comes in. Flag = 0, first 0x20 is encountered. set flag = 1. run loop again, encounter 2nd 0x20 AND flag = 1. discover size of string, create character array to that size and load value into it. save character array as string.
+                    //cont from above: Write newly created string to output list
+                   
                     zx[counter1] = b;
                      char[] cArray = { 'a' };
 
@@ -390,7 +367,7 @@ class ParseInputs
             counter2++;
 
         }
-        vl1.ForEach(Console.WriteLine);
+        vl1.ForEach(Console.WriteLine); //Output each result
     }
     
 }
