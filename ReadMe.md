@@ -4,7 +4,7 @@ This program is meant to be run and then left alone.
 like I said, it's in its early stage. clicking away 
 From the cmd window can lead to things getting...unpredictable.
 
-So just don't do it.
+So just don't do it, unless youre trying to close it. 
 
 
 # Requirements # 
