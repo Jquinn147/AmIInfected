@@ -194,7 +194,7 @@ namespace GetHandle
 
 
             InitializeComponent();
-            System.Threading.Thread.Sleep(1000);
+            System.Threading.Thread.Sleep(10000);
             
             //Early version of visual output
             List<string> RuleReturn = new List<string>();
